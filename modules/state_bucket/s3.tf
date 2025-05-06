@@ -5,5 +5,5 @@ resource "aws_s3_bucket" "terraform_state_bucket" {
         prevent_destroy = true
     }
 
-    tags = var.required_tags
+    tags = merge(var.required_tags,{})
 }

@@ -8,10 +8,6 @@ aws s3api create-bucket \
   --region ap-southeast-1 \
   --create-bucket-configuration LocationConstraint=ap-southeast-1 \
   --profile wilsonwkj-aws-<ENV>
-
-# import it into tf state
-terraform import module.state_bucket.aws_s3_bucket.terraform_state_bucket wilsonwkj-project-srehomework-tfstate-lab
-
 ```
 ###### state lock DynamoDB table
 ```
@@ -22,4 +18,15 @@ aws dynamodb create-table \
   --billing-mode PAY_PER_REQUEST \
   --region ap-southeast-1 \
   --profile wilsonwkj-aws-<ENV>
-  ```
+```
+
+###### Deploy commands for each stage
+```
+# stage 1: state bucket
+terraform apply -target=module.state_bucket
+
+# import it into tf state
+terraform import module.state_bucket.aws_s3_bucket.terraform_state_bucket wilsonwkj-project-srehomework-tfstate-lab
+
+# stage 2: vpc network
+terraform apply -target=module.vpc
