@@ -1,4 +1,11 @@
-# terraform
+# SRE Homework
+
+Good morning team, I have created an IAM user for you to take a look around my AWS lab environment!
+Console sign-in link:
+https://797181129561.signin.aws.amazon.com/console
+account/pswd = Welcome-to-my-lab / Welcome!
+
+# terraform deploy commands
 ### First time creation manual setup
 ###### tfstate s3 bucket in each environment:
 ```
