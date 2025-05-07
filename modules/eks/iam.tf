@@ -72,3 +72,4 @@ resource "aws_iam_instance_profile" "eks_node" {
         aws_iam_role.eks_node
     ]
 }
+

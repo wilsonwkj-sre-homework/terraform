@@ -34,7 +34,11 @@ terraform import module.state_bucket.aws_s3_bucket.terraform_state_bucket wilson
 terraform apply -target=module.vpc
 ```
 ```
-# stage 3: eks
+# stage 3: ecr
+terraform apply -target=module.ecr
+```
+```
+# stage 4: eks
 terraform apply -target=module.eks
 ```
 graph TD
@@ -46,3 +50,7 @@ graph TD
 # stage 4: 
 terraform apply -target=module.alb
 ```
+
+###### Troubleshooting and docs
+https://ithelp.ithome.com.tw/m/articles/10293460
+https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
