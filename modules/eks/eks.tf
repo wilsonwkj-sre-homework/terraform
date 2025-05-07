@@ -1,117 +1,60 @@
-# EKS Cluster
-resource "aws_eks_cluster" "this" {
-    name     = "${var.eks_cluster_name}-${var.environment}"
-    role_arn = aws_iam_role.eks_cluster.arn
+module "eks" {
+  # environment = "lab"
+  # eks_cluster_name  = "sre-homework-eks-cluster"
+  # vpc_id        = module.vpc.vpc_id
+  # subnet_ids    = module.vpc.public_subnet_ids
+  # required_tags = {
+  #   Project     = "sre-homework"
+  #   Environment = "lab"
+  # }
+  # desired_capacity = 2
+  # max_capacity     = 3
+  # min_capacity     = 1
+  # node_instance_type = "t4g.small"
+  source        = "terraform-aws-modules/eks/aws"
+  version             = "~> 20.0"
+  cluster_name        = "sre-homework-eks-cluster"
+  cluster_version     = "1.31"
 
-    vpc_config {
-        subnet_ids = var.subnet_ids
-        security_group_ids = [aws_security_group.eks_cluster.id]
-        endpoint_public_access  = true
-        endpoint_private_access = false
+  cluster_endpoint_public_access = true
+  enable_cluster_creator_admin_permissions = true
+
+  cluster_addons = {
+    coredns = {
+      most_recent = true
     }
-
-    tags = merge(var.required_tags, {
-        Name = "${var.eks_cluster_name}-${var.environment}"
-        "kubernetes.io/cluster/${var.eks_cluster_name}-${var.environment}" = "owned"
-    })
-
-    # Ensure IAM role exists first
-    depends_on = [
-        aws_iam_role.eks_cluster,
-        aws_iam_role.eks_node,
-        aws_iam_role_policy_attachment.eks_cluster_policy,
-        aws_iam_role_policy_attachment.eks_worker_node_policy,
-        aws_iam_role_policy_attachment.eks_cni_policy,
-        aws_iam_instance_profile.eks_node,
-        aws_security_group.eks_cluster
-    ]
-}
-
-# Launch Template for EKS Node Group
-resource "aws_launch_template" "eks_nodes_launch_template" {
-    name = "${var.eks_cluster_name}-launch-template-${var.environment}"
-    description = "Launch template for EKS node group"
-
-    vpc_security_group_ids = [aws_security_group.eks_nodes.id]
-
-    tag_specifications {
-    resource_type = "instance"
-    tags = merge(var.required_tags, {
-      Name = "${var.eks_cluster_name}-node-${var.environment}"
-      "kubernetes.io/cluster/${var.eks_cluster_name}-${var.environment}" = "owned"
-    })
+    kube-proxy = {
+      most_recent = true
+    }
+    vpc-cni = {
+      most_recent = true
+    }
   }
 
-    depends_on = [
-        aws_security_group.eks_cluster
-    ]
-}
+  # vpc_id                   = module.vpc.vpc_id
+  # subnet_ids               = module.vpc.public_subnet_ids
+  # control_plane_subnet_ids = module.vpc.public_subnet_ids
+  vpc_id                   = var.vpc_id
+  subnet_ids               = var.subnet_ids
+  control_plane_subnet_ids = var.subnet_ids
 
-# Configure aws-auth ConfigMap to allow nodes to join the cluster
-data "aws_caller_identity" "current" {}
+  eks_managed_node_groups = {
+    lab = {
+      ami_type     = "AL2023_x86_64_STANDARD"
+      instance_types = ["t3.small"]
+      capacity_type  = "ON_DEMAND"
 
-resource "kubernetes_config_map" "aws_auth" {
-  metadata {
-    name      = "aws-auth"
-    namespace = "kube-system"
-  }
+      min_size     = 1
+      max_size     = 3
+      desired_size = 2
 
-  data = {
-    mapRoles = yamlencode([
-      {
-        rolearn  = aws_iam_role.eks_node.arn
-        username = "system:node:{{EC2PrivateDNSName}}"
-        groups   = ["system:bootstrappers", "system:nodes"]
-      }
-    ])
-  }
+      # iam_role_name = "node-role-lab" # Custom short name
+      # iam_role_use_name_prefix = false    # Use fixed name instead of prefix
 
-  depends_on = [
-    aws_eks_cluster.this
-  ]
-}
-
-# EKS Node Group
-resource "aws_eks_node_group" "this" {
-    cluster_name    = aws_eks_cluster.this.name
-    node_role_arn   = aws_iam_role.eks_node.arn
-    subnet_ids      = var.subnet_ids
-    instance_types  = [var.node_instance_type]
-    ami_type        = "AL2_x86_64"
-    capacity_type   = "ON_DEMAND"
-
-    launch_template {
-        id      = aws_launch_template.eks_nodes_launch_template.id
-        version = "$Latest"
     }
-
-    scaling_config {
-        desired_size = var.desired_capacity
-        max_size     = var.max_capacity
-        min_size     = var.min_capacity
-    }
-
-    tags = merge(var.required_tags, {
-        Name = "${var.eks_cluster_name}-node-group-${var.environment}"
-        "kubernetes.io/cluster/${var.eks_cluster_name}-${var.environment}" = "owned"
-    })
-
-    # Must wait for:
-    # 1. eks cluster
-    # 2. Node IAM role
-    # 3. Instance profile 
-    # 4. Security group
-    # 5. lauch template for worker nodes
-    depends_on = [
-        aws_iam_role.eks_cluster,
-        aws_iam_role.eks_node,
-        aws_iam_role_policy_attachment.eks_cluster_policy,
-        aws_iam_role_policy_attachment.eks_worker_node_policy,
-        aws_iam_role_policy_attachment.eks_cni_policy,
-        aws_iam_instance_profile.eks_node,
-        aws_eks_cluster.this,
-        aws_security_group.eks_nodes,
-        aws_launch_template.eks_nodes_launch_template,
-        kubernetes_config_map.aws_auth
-    ]
+  }
+  tags = {
+    Project     = "sre-homework"
+    Environment = "${var.environment}"
+  }
 }

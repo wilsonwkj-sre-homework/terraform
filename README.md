@@ -40,6 +40,8 @@ terraform apply -target=module.ecr
 ```
 # stage 4: eks
 terraform apply -target=module.eks
+aws eks update-kubeconfig --name sre-homework-eks-cluster --region ap-southeast-1 --profi
+le wilsonwkj-aws-lab
 ```
 graph TD
   A[IAM Roles] --> B[EKS Cluster]
