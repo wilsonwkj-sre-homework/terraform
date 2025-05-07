@@ -24,9 +24,46 @@ aws dynamodb create-table \
 ```
 # stage 1: state bucket
 terraform apply -target=module.state_bucket
-
+```
+```
 # import it into tf state
 terraform import module.state_bucket.aws_s3_bucket.terraform_state_bucket wilsonwkj-project-srehomework-tfstate-lab
-
+```
+```
 # stage 2: vpc network
 terraform apply -target=module.vpc
+```
+```
+# stage 3: ecr
+terraform apply -target=module.ecr
+```
+```
+# stage 4: eks
+terraform apply -target=module.eks
+aws eks update-kubeconfig --name sre-homework-eks-cluster --region ap-southeast-1 --profi
+le wilsonwkj-aws-lab
+```
+graph TD
+  A[IAM Roles] --> B[EKS Cluster]
+  B --> C[Node Group]
+  A --> D[Instance Profile]
+  D --> C
+```
+# stage 4: 
+cd /environments/common/
+
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.7/docs/install/iam_policy.json
+
+aws iam create-policy \
+--policy-name AWSLoadBalancerControllerIAMPolicy \
+--policy-document file://iam_policy.json \
+--profile wilsonwkj-aws-lab
+
+terraform import module.charts.aws_iam_policy.AWSLoadBalancerControllerIAMPolicy arn:aws:iam::797181129561:policy/AWSLoadBalancerControllerIAMPolicy
+
+terraform apply -target=module.charts
+```
+
+###### Troubleshooting and docs
+https://ithelp.ithome.com.tw/m/articles/10293460
+https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest

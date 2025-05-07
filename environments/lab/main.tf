@@ -14,7 +14,7 @@ module "vpc" {
   vpc_cidr            = "10.0.0.0/16"
   public_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24"]
   azs                 = ["ap-southeast-1a", "ap-southeast-1b"]
-  eks_cluster_name    = "sre-homework-eks-lab"
+  eks_cluster_name    = "sre-homework-eks-cluster"
 
   required_tags = {
     Project     = "sre-homework"
@@ -22,29 +22,33 @@ module "vpc" {
   }
 }
 
+module "eks" {
+  source          = "../../modules/eks"
+  environment   = "lab"
+  vpc_id                    = module.vpc.vpc_id
+  subnet_ids                = module.vpc.public_subnet_ids
+  control_plane_subnet_ids  = module.vpc.public_subnet_ids
+}
 
-# module "eks" {
-#   source  = "terraform-aws-modules/eks/aws"
-#   version = "~> 20.0"
 
-#   cluster_name    = var.cluster_name
-#   cluster_version = "1.29"
-#   subnet_ids      = module.vpc.public_subnets
-#   vpc_id          = module.vpc.vpc_id
+module "ecr" {
+  source        = "../../modules/ecr"
+  project_name        = "sre-homework"
+  environment         = "lab"
 
-#   enable_irsa = true
+  required_tags = {
+    Project     = "sre-homework"
+    Environment = "lab"
+  }
+}
 
-#   eks_managed_node_groups = {
-#     default = {
-#       instance_types = ["t3.small"]
-#       desired_size   = 1
-#       max_size       = 2
-#       min_size       = 1
-#     }
-#   }
-
-#   tags = {
-#     Environment = "dev"
-#     Terraform   = "true"
-#   }
-# }
+module "charts" {
+  source = "../../modules/charts"
+  environment = "lab"
+  region = "ap-southeast-1"
+  eks_cluster_name = "sre-homework-eks-cluster"
+  cluster_endpoint    = "https://2E2B5476BE923B7FDD9EDF3837600657.gr7.ap-southeast-1.eks.amazonaws.com"
+  AWS_ACCOUNT_ID = "797181129561"
+  OIDC_ID = "2E2B5476BE923B7FDD9EDF3837600657"
+  vpc_id  = module.vpc.vpc_id
+}
