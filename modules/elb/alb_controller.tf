@@ -1,12 +1,13 @@
 # Helm provider to install AWS Load Balancer Controller
 provider "helm" {
   kubernetes {
-    host = module.aws_eks.cluster_endpoint
+    host = var.cluster_endpoint
     exec {
       api_version = "client.authentication.k8s.io/v1beta1"
       command     = "aws"
-      args        = ["eks", "get-token", "--cluster-name", module.aws_eks.cluster_name, "--region", var.region, "--profile", "wilsonwkj-aws-${var.environment}"]
+      args        = ["eks", "get-token", "--cluster-name", var.eks_cluster_name, "--region", var.region, "--profile", "wilsonwkj-aws-${var.environment}"]
     }
+    insecure = true
   }
 }
 
@@ -19,7 +20,7 @@ resource "helm_release" "aws_load_balancer_controller" {
 
   set {
     name  = "clusterName"
-    value = module.aws_eks.cluster_name
+    value = var.eks_cluster_name
   }
 
   set {
@@ -38,7 +39,6 @@ resource "helm_release" "aws_load_balancer_controller" {
   }
 
   depends_on = [
-    module.aws_eks,
     aws_iam_role_policy_attachment.aws_load_balancer_controller_policy
   ]
 }
