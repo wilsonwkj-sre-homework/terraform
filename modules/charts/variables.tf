@@ -22,5 +22,9 @@ variable "OIDC_ID" {
   type        = string
 }
 
+variable "vpc_id" {
+  type        = string
+}
+
 
 

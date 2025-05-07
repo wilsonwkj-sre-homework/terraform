@@ -37,7 +37,7 @@ resource "helm_release" "nginx_app" {
 
     set {
       name  = "image.repository"
-      value = "797181129561.dkr.ecr.ap-southeast-1.amazonaws.com/custom-nginx"
+      value = "797181129561.dkr.ecr.ap-southeast-1.amazonaws.com/sre-homework-nginx-app-lab"
     }
     set {
       name  = "image.tag"
@@ -47,6 +47,10 @@ resource "helm_release" "nginx_app" {
       name  = "service.port"
       value = "80"
     }
+    set {
+    name  = "ingress.annotations.alb\\.ingress\\.kubernetes\\.io/security-groups"
+    value = aws_security_group.alb_sg.id
+  }
 
     depends_on = [helm_release.aws_load_balancer_controller]
   }

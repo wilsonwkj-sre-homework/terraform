@@ -6,21 +6,26 @@ metadata:
   labels:
     {{- include "nginx-app.labels" . | nindent 4 }}
   annotations:
-    {{- toYaml .Values.ingress.annotations | nindent 4 }}
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
+  {{- if .Values.ingress.className }}
+  ingressClassName: {{ .Values.ingress.className }}
+  {{- end }}
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host }}
+  {{- range .Values.ingress.hosts }}
+    - host: {{ .host | quote }}
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
+        {{- range .paths }}
+          - path: {{ .path | quote }}
+            pathType: {{ .pathType | default "ImplementationSpecific" | quote }}
             backend:
               service:
-                name: {{ include "nginx-app.fullname" $ }}
+                name: {{ include "nginx-app.fullname" $ | quote }}
                 port:
                   number: {{ $.Values.service.port }}
-          {{- end }}
-    {{- end }}
+        {{- end }}
+  {{- end }}
 {{- end }}
