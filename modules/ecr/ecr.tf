@@ -1,5 +1,5 @@
 resource "aws_ecr_repository" "this" {
-  name                 = "${var.project_name}-nginx-${var.environment}"
+  name                 = "${var.project_name}-nginx-app-${var.environment}"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
@@ -9,7 +9,7 @@ resource "aws_ecr_repository" "this" {
   tags = merge(var.required_tags,{})
 }
 
-# Optional: Add a lifecycle policy to manage old images
+# Add a lifecycle policy to manage old images
 resource "aws_ecr_lifecycle_policy" "this" {
   repository = aws_ecr_repository.this.name
 
@@ -21,7 +21,7 @@ resource "aws_ecr_lifecycle_policy" "this" {
         selection = {
           tagStatus   = "any"
           countType   = "imageCountMoreThan"
-          countNumber = 30
+          countNumber = 10
         }
         action = {
           type = "expire"

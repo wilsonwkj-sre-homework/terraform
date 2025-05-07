@@ -1,6 +1,6 @@
 # Security Group for EKS Control Plane
 resource "aws_security_group" "eks_cluster" {
-  name        = "${var.eks_cluster_name}-cluster-sg-${var.environment}"
+  name        = "${var.eks_cluster_name}-sg-${var.environment}"
   description = "Security group for EKS cluster control plane"
   vpc_id      = var.vpc_id
 
@@ -12,7 +12,7 @@ resource "aws_security_group" "eks_cluster" {
   }
 
   tags = merge(var.required_tags, {
-    Name = "${var.eks_cluster_name}-cluster-sg-${var.environment}"
+    Name = "${var.eks_cluster_name}-sg-${var.environment}"
   })
 }
 

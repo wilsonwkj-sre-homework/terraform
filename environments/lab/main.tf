@@ -37,3 +37,13 @@ module "eks" {
   min_capacity     = 1
   node_instance_type = "t4g.nano"
 }
+
+module "ecr" {
+  source        = "../../modules/ecr"
+  project_name        = "sre-homework"
+  environment         = "lab"
+  required_tags = {
+    Project     = "sre-homework"
+    Environment = "lab"
+  }
+}

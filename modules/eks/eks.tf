@@ -52,7 +52,7 @@ resource "aws_eks_node_group" "this" {
     capacity_type   = "ON_DEMAND"
 
     launch_template {
-        id      = aws_launch_template.eks_nodes.id
+        id      = aws_launch_template.eks_nodes_launch_template.id
         version = "$Latest"
     }
 
@@ -62,20 +62,16 @@ resource "aws_eks_node_group" "this" {
         min_size     = var.min_capacity
     }
 
-    # # Associate security group with node group
-    # remote_access {
-    #     ec2_ssh_key               = var.ssh_key_name # Optional, if you need SSH access
-    #     source_security_group_ids = [aws_security_group.eks_nodes.id]
-    # }
-
     tags = merge(var.required_tags, {
         Name = "${var.eks_cluster_name}-node-group-${var.environment}"
     })
 
     # Must wait for:
-    # 1. Cluster to be fully active
-    # 2. Node IAM role policies to attach
-    # 3. Instance profile creation
+    # 1. eks cluster
+    # 2. Node IAM role
+    # 3. Instance profile 
+    # 4. Security group
+    # 5. lauch template for worker nodes
     depends_on = [
         aws_iam_role.eks_cluster,
         aws_iam_role.eks_node,
