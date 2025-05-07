@@ -48,4 +48,6 @@ module "charts" {
   region = "ap-southeast-1"
   eks_cluster_name = "sre-homework-eks-cluster"
   cluster_endpoint    = "https://2E2B5476BE923B7FDD9EDF3837600657.gr7.ap-southeast-1.eks.amazonaws.com"
+  AWS_ACCOUNT_ID = "797181129561"
+  OIDC_ID = "2E2B5476BE923B7FDD9EDF3837600657"
 }

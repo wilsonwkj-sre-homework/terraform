@@ -26,13 +26,13 @@ resource "helm_release" "aws_load_balancer_controller" {
   }
 
   depends_on = [
-    aws_iam_role_policy_attachment.aws_load_balancer_controller_policy
+    aws_iam_role_policy_attachment.lb_controller
   ]
 }
 
 resource "helm_release" "nginx_app" {
     name       = "nginx-app"
-    chart      = "./nginx-app"
+    chart      = "../../nginx-app"
     namespace  = "default"
 
     set {
@@ -44,8 +44,8 @@ resource "helm_release" "nginx_app" {
       value = "latest"
     }
     set {
-      name  = "ingress.hosts[0].host"
-      value = "nginx.example.com"
+      name  = "service.port"
+      value = "80"
     }
 
     depends_on = [helm_release.aws_load_balancer_controller]

@@ -13,3 +13,14 @@ variable "region" {
 variable "cluster_endpoint" {
   type        = string
 }
+
+variable "AWS_ACCOUNT_ID" {
+  type        = string
+}
+
+variable "OIDC_ID" {
+  type        = string
+}
+
+
+
