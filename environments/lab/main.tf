@@ -36,36 +36,16 @@ module "ecr" {
   project_name        = "sre-homework"
   environment         = "lab"
 
-
   required_tags = {
     Project     = "sre-homework"
     Environment = "lab"
   }
 }
 
-module "elb" {
-  source = "../../modules/elb"
+module "charts" {
+  source = "../../modules/charts"
   environment = "lab"
   region = "ap-southeast-1"
   eks_cluster_name = "sre-homework-eks-cluster"
   cluster_endpoint    = "https://2E2B5476BE923B7FDD9EDF3837600657.gr7.ap-southeast-1.eks.amazonaws.com"
-
-  # required_tags = {
-  #   Project     = "sre-homework"
-  #   Environment = "lab"
-  # }
 }
-
-# module "lb_role" {
-#   source    = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
-
-#   role_name = "sre-homework-eks-lb-lab"
-#   attach_load_balancer_controller_policy = true
-
-#   oidc_providers = {
-#     main = {
-#       provider_arn               = module.eks.oidc_provider_arn
-#       namespace_service_accounts = ["kube-system:aws-load-balancer-controller"]
-#     }
-#   }
-# }

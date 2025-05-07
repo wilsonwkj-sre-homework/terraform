@@ -1,16 +1,3 @@
-# Helm provider to install AWS Load Balancer Controller
-provider "helm" {
-  kubernetes {
-    host = var.cluster_endpoint
-    exec {
-      api_version = "client.authentication.k8s.io/v1beta1"
-      command     = "aws"
-      args        = ["eks", "get-token", "--cluster-name", var.eks_cluster_name, "--region", var.region, "--profile", "wilsonwkj-aws-${var.environment}"]
-    }
-    insecure = true
-  }
-}
-
 resource "helm_release" "aws_load_balancer_controller" {
   name       = "aws-load-balancer-controller"
   repository = "https://aws.github.io/eks-charts"
@@ -42,3 +29,24 @@ resource "helm_release" "aws_load_balancer_controller" {
     aws_iam_role_policy_attachment.aws_load_balancer_controller_policy
   ]
 }
+
+resource "helm_release" "nginx_app" {
+    name       = "nginx-app"
+    chart      = "./nginx-app"
+    namespace  = "default"
+
+    set {
+      name  = "image.repository"
+      value = "797181129561.dkr.ecr.ap-southeast-1.amazonaws.com/custom-nginx"
+    }
+    set {
+      name  = "image.tag"
+      value = "latest"
+    }
+    set {
+      name  = "ingress.hosts[0].host"
+      value = "nginx.example.com"
+    }
+
+    depends_on = [helm_release.aws_load_balancer_controller]
+  }
