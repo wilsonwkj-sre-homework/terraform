@@ -24,9 +24,25 @@ aws dynamodb create-table \
 ```
 # stage 1: state bucket
 terraform apply -target=module.state_bucket
-
+```
+```
 # import it into tf state
 terraform import module.state_bucket.aws_s3_bucket.terraform_state_bucket wilsonwkj-project-srehomework-tfstate-lab
-
+```
+```
 # stage 2: vpc network
 terraform apply -target=module.vpc
+```
+```
+# stage 3: eks
+terraform apply -target=module.eks
+```
+graph TD
+  A[IAM Roles] --> B[EKS Cluster]
+  B --> C[Node Group]
+  A --> D[Instance Profile]
+  D --> C
+```
+# stage 4: 
+terraform apply -target=module.alb
+```
