@@ -1,9 +1,11 @@
 # SRE Homework
-
 Good morning team, I have created an IAM user for you to take a look around my AWS lab environment!
 Console sign-in link:
 https://797181129561.signin.aws.amazon.com/console
 account/pswd = Welcome-to-my-lab / Welcome!
+
+DNS of the ALB fronted my EKS cluster is:
+k8s-default-nginxapp-438ac42f3d-1183986744.ap-southeast-1.elb.amazonaws.com
 
 # terraform deploy commands
 ### First time creation manual setup
