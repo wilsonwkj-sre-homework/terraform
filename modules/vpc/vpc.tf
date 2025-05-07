@@ -26,7 +26,7 @@ resource "aws_subnet" "public" {
 
     tags = merge(var.required_tags,{
     Name                                        = "${var.project_name}-public-${var.environment}-${count.index}"
-    "kubernetes.io/cluster/${var.eks_cluster_name}" = "shared"
+    "kubernetes.io/cluster/${var.eks_cluster_name}" = "owned"
     "kubernetes.io/role/elb"                    = "1"
     })
     depends_on = [aws_vpc.this]

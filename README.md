@@ -50,7 +50,18 @@ graph TD
   D --> C
 ```
 # stage 4: 
-terraform apply -target=module.alb
+cd /environments/common/
+
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.7/docs/install/iam_policy.json
+
+aws iam create-policy \
+--policy-name AWSLoadBalancerControllerIAMPolicy \
+--policy-document file://iam_policy.json \
+--profile wilsonwkj-aws-lab
+
+terraform import module.charts.aws_iam_policy.AWSLoadBalancerControllerIAMPolicy arn:aws:iam::797181129561:policy/AWSLoadBalancerControllerIAMPolicy
+
+terraform apply -target=module.charts
 ```
 
 ###### Troubleshooting and docs

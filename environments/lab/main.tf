@@ -14,7 +14,7 @@ module "vpc" {
   vpc_cidr            = "10.0.0.0/16"
   public_subnet_cidrs = ["10.0.1.0/24", "10.0.2.0/24"]
   azs                 = ["ap-southeast-1a", "ap-southeast-1b"]
-  eks_cluster_name    = "sre-homework-eks-lab"
+  eks_cluster_name    = "sre-homework-eks-cluster"
 
   required_tags = {
     Project     = "sre-homework"

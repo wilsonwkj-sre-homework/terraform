@@ -1,3 +1,7 @@
+resource "aws_iam_policy" "AWSLoadBalancerControllerIAMPolicy" {
+  name    = "AWSLoadBalancerControllerIAMPolicy"
+  policy  = file("../../environments/common/iam_policy.json")
+}
 # IAM Role for AWS Load Balancer Controller
 resource "aws_iam_role" "aws_load_balancer_controller" {
   name = "${var.eks_cluster_name}-lb-controller"
@@ -17,6 +21,7 @@ resource "aws_iam_role" "aws_load_balancer_controller" {
       }
     }]
   })
+  depends_on = [ aws_iam_policy.AWSLoadBalancerControllerIAMPolicy ]
 }
 
 resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller_policy" {
@@ -29,9 +34,10 @@ resource "aws_iam_role_policy_attachment" "aws_load_balancer_controller_policy" 
 
 # Attach the pre-made AWS policy for ALB Controller
 resource "aws_iam_role_policy_attachment" "lb_controller" {
-  policy_arn = "arn:aws:iam::aws:policy/AWSLoadBalancerControllerIAMPolicy"
+  policy_arn = "arn:aws:iam::${var.AWS_ACCOUNT_ID}:policy/AWSLoadBalancerControllerIAMPolicy"
   role       = aws_iam_role.aws_load_balancer_controller.name
   depends_on = [
+      aws_iam_policy.AWSLoadBalancerControllerIAMPolicy,
       aws_iam_role_policy_attachment.aws_load_balancer_controller_policy
     ]
 }

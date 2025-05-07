@@ -5,6 +5,6 @@ terraform {
     region         = "ap-southeast-1"
     encrypt        = true
     # dynamodb_table = "terraform-locks-lab"
-    profile = "wilsonwkj-aws-lab"
+    profile         = "wilsonwkj-aws-lab"
   }
 }
