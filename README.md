@@ -1,11 +1,22 @@
 # SRE Homework
-Good morning team, I have created an IAM user for you to take a look around my AWS lab environment!
+Good morning team!
+I have created an IAM user for you to take a look around my AWS lab environment!
+```
 Console sign-in link:
 https://797181129561.signin.aws.amazon.com/console
 account/pswd = Welcome-to-my-lab / Welcome!
-
+```
 DNS of the ALB fronted my EKS cluster is:
+```
 k8s-default-nginxapp-438ac42f3d-434409634.ap-southeast-1.elb.amazonaws.com
+http://k8s-default-nginxapp-438ac42f3d-434409634.ap-southeast-1.elb.amazonaws.com/sre.txt
+# Access this path to see the "Hello SRE!" greeting
+```
+The Nginx app Dockerfile is placed in another repo:
+https://github.com/wilsonwkj-sre-homework/nginx-app
+
+I've wrote CI/CD pipelines for both repos, the yaml can be found in /.github/workflows/
+
 
 # terraform deploy commands
 ### First time creation manual setup
@@ -76,3 +87,4 @@ terraform apply -target=module.charts
 ###### Troubleshooting and docs
 https://ithelp.ithome.com.tw/m/articles/10293460
 https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
+https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/node_groups.tf
