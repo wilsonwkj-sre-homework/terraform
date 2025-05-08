@@ -22,6 +22,11 @@ variable "control_plane_subnet_ids" {
     type        = list(string)
 }
 
+variable "alb_sg_id" {
+    description = "List of subnet IDs for EKS nodes"
+    type        = string
+}
+
 # variable "required_tags" {
 #     description = "Tags to apply to all resources"
 #     type          = object({

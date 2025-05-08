@@ -54,6 +54,16 @@ module "eks" {
 
     }
   }
+  node_security_group_additional_rules = {
+    ingress_from_alb = {
+      description              = "Allow inbound traffic from ALB security group on port 80"
+      protocol                 = "tcp"
+      from_port                = 80
+      to_port                  = 80
+      type                     = "ingress"
+      source_security_group_id = var.alb_sg_id
+    }
+  }
   tags = {
     Project     = "sre-homework"
     Environment = "${var.environment}"

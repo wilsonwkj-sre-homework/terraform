@@ -28,6 +28,7 @@ module "eks" {
   vpc_id                    = module.vpc.vpc_id
   subnet_ids                = module.vpc.public_subnet_ids
   control_plane_subnet_ids  = module.vpc.public_subnet_ids
+  alb_sg_id = "sg-0d8ceaaef3d874725"
 }
 
 
