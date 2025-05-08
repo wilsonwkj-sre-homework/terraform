@@ -1,6 +1,7 @@
 # SRE Homework
 Good morning team!
 I have created an IAM user for you to take a look around my AWS lab environment!
+(resources and infrastructure in this project were deployed to ap-southeast-1)
 ```
 Console sign-in link:
 https://797181129561.signin.aws.amazon.com/console
