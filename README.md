@@ -116,7 +116,7 @@ terraform apply -target=module.charts
 terraform apply -target=module.eks
 ```
 
-###### Troubleshooting and docs
+###### Reference and troubleshooting docs
 https://ithelp.ithome.com.tw/m/articles/10293460
 https://registry.terraform.io/modules/terraform-aws-modules/eks/aws/latest
 https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/node_groups.tf
