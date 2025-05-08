@@ -16,7 +16,36 @@ The Nginx app Dockerfile is placed in another repo:
 https://github.com/wilsonwkj-sre-homework/nginx-app
 
 I've wrote CI/CD pipelines for both repos, the yaml can be found in /.github/workflows/
+<br>
+For the question 5, my solution for multi-environment CI/CD using Github can be define multi-stages of deployment, with the help of branches and conditions, we are able to bring different variables into our tasks in order to achieve multi-environment build(like tags) and deployment(targets, arns, endpoints):
+```
+deploy-staging:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/develop'
+    environment: staging
+    ...
+    - name: Configure AWS Credentials
+    uses: aws-actions/configure-aws-credentials@v2
+    with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID_STAGING }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY_STAGING }}
+      aws-region: ${{ var.AWS_REGION_STAGING }}
+      # This can brings us to the staging environment target
+    ...
+deploy-production:
+    needs: build-and-test
+    if: github.ref == 'refs/heads/master'
+    environment: production
+    ...
+    - name: Deploy to Production
+        run: |
+          helm upgrade --install nginx-app-prod ./nginx-app-*.tgz \
+            --namespace production --create-namespace \
+            --set image.tag=latest
+            # This can gave our artifact a corresponding suffix
+    ...
 
+```
 
 # terraform deploy commands
 ### First time creation manual setup
