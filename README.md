@@ -17,7 +17,7 @@ https://github.com/wilsonwkj-sre-homework/nginx-app
 
 I've wrote CI/CD pipelines for both repos, the yaml can be found in /.github/workflows/
 <br>
-For the question 5, my solution for multi-environment CI/CD using Github can be define multi-stages of deployment, with the help of branches and conditions, we are able to bring different variables into our tasks in order to achieve multi-environment build(like tags) and deployment(targets, arns, endpoints):
+For question 5, my solution for multi-environment CI/CD using Github can be define multi-stages of deployment, with the help of branches and conditions, we are able to bring different variables into our tasks in order to achieve multi-environment build(like tags) and deployment(targets, arns, endpoints):
 ```
 deploy-staging:
     needs: build-and-test
@@ -46,7 +46,10 @@ deploy-production:
     ...
 
 ```
+For question 6,
 
+
+<br> 
 # terraform deploy commands
 ### First time creation manual setup
 ###### tfstate s3 bucket in each environment:
