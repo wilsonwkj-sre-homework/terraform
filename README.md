@@ -17,7 +17,8 @@ https://github.com/wilsonwkj-sre-homework/nginx-app
 
 I've wrote CI/CD pipelines for both repos, the yaml can be found in /.github/workflows/
 <br>
-For question 5, my solution for multi-environment CI/CD using Github can be define multi-stages of deployment, with the help of branches and conditions, we are able to bring different variables into our tasks in order to achieve multi-environment build(like tags) and deployment(targets, arns, endpoints):
+For question 5,
+my solution for multi-environment CI/CD using Github can be define multi-stages of deployment, with the help of branches and conditions, we are able to bring different variables into our tasks in order to achieve multi-environment build(like tags) and deployment(targets, arns, endpoints):
 ```
 deploy-staging:
     needs: build-and-test
@@ -47,7 +48,7 @@ deploy-production:
 
 ```
 For question 6,
-
+my first thought will be using Helm --set flags during deployment, or which I coincidentally did with similar way in /nginx-app/values.yaml:24, substitute by /module/charts/charts.tf:50, both is a good and usual way to pass variables for service creation.
 
 <br> 
 # terraform deploy commands

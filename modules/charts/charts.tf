@@ -48,9 +48,9 @@ resource "helm_release" "nginx_app" {
       value = "80"
     }
     set {
-    name  = "ingress.annotations.alb\\.ingress\\.kubernetes\\.io/security-groups"
-    value = aws_security_group.alb_sg.id
-  }
+      name  = "ingress.annotations.alb\\.ingress\\.kubernetes\\.io/security-groups"
+      value = aws_security_group.alb_sg.id
+    }
 
     depends_on = [helm_release.aws_load_balancer_controller]
   }
