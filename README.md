@@ -16,7 +16,9 @@ The Nginx app Dockerfile is placed in another repo:
 https://github.com/wilsonwkj-sre-homework/nginx-app
 
 I've wrote CI/CD pipelines for both repos, the yaml can be found in /.github/workflows/
+
 <br>
+
 For question 5,
 my solution for multi-environment CI/CD using Github can be define multi-stages of deployment, with the help of branches and conditions, we are able to bring different variables into our tasks in order to achieve multi-environment build(like tags) and deployment(targets, arns, endpoints):
 ```
@@ -51,6 +53,7 @@ For question 6,
 my first thought will be using Helm --set flags during deployment, or which I coincidentally did with similar way in /nginx-app/values.yaml:24, substitute by /module/charts/charts.tf:50, both is a good and usual way to pass variables for service creation.
 
 <br> 
+
 # terraform deploy commands
 ### First time creation manual setup
 ###### tfstate s3 bucket in each environment:
@@ -77,44 +80,40 @@ aws dynamodb create-table \
 ```
 # stage 1: state bucket
 terraform apply -target=module.state_bucket
-```
-```
+
 # import it into tf state
 terraform import module.state_bucket.aws_s3_bucket.terraform_state_bucket wilsonwkj-project-srehomework-tfstate-lab
-```
-```
+
 # stage 2: vpc network
 terraform apply -target=module.vpc
-```
-```
+
 # stage 3: ecr
 terraform apply -target=module.ecr
-```
-```
+
 # stage 4: eks
 terraform apply -target=module.eks
-aws eks update-kubeconfig --name sre-homework-eks-cluster --region ap-southeast-1 --profi
-le wilsonwkj-aws-lab
-```
-graph TD
-  A[IAM Roles] --> B[EKS Cluster]
-  B --> C[Node Group]
-  A --> D[Instance Profile]
-  D --> C
-```
-# stage 4: 
-cd /environments/common/
 
+# stage 5: charts
+cd /environments/common/            # for shared resource
 curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.4.7/docs/install/iam_policy.json
+# Policies json that allow ingress pod(alb_controller) to create ALB
 
 aws iam create-policy \
 --policy-name AWSLoadBalancerControllerIAMPolicy \
 --policy-document file://iam_policy.json \
 --profile wilsonwkj-aws-lab
+# Use AWS CLI to create policy
 
 terraform import module.charts.aws_iam_policy.AWSLoadBalancerControllerIAMPolicy arn:aws:iam::797181129561:policy/AWSLoadBalancerControllerIAMPolicy
+# Import the resource back to tfstate
 
 terraform apply -target=module.charts
+# Without the policy, alb list will be empty even if service pods starts up
+
+# After alb security group was created in stage 5
+# add a security group rule in eks_node_sg to allow inbound traffics from alb_sg (
+# (else will get 504 bad gateway while accessing alb DNS)
+terraform apply -target=module.eks
 ```
 
 ###### Troubleshooting and docs
